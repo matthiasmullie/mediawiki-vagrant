@@ -40,7 +40,7 @@ class npm (
     }
 
     exec { 'npm_set_cache_dir':
-        command => "/bin/mkdir -p ${cache_dir} && /bin/chmod -R 0777 ${cache_dir}",
+        command => "/bin/mkdir -p ${cache_dir} && /bin/chmod -R 0777 ${cache_dir} && /bin/chown -R 1000:1000 ${cache_dir}",
         unless  => "/usr/bin/test -d ${cache_dir}",
         user    => 'root',
         group   => 'root',
@@ -50,11 +50,13 @@ class npm (
     # See: https://github.com/npm/npm/issues/9953
     # Although the ticket is closed, the issue is still present, so downgrade
     # to the latest npm 2
-    exec { 'downgrade_npm':
-      command => '/usr/bin/npm install -g npm@latest-2',
-      user    => 'root',
-      unless  => '/usr/bin/npm --version | /bin/grep -qe ^2',
-      require => Package['nodejs'],
+    if $node_version == 6 {
+        exec { 'downgrade_npm':
+          command => '/usr/bin/npm install -g npm@latest-2',
+          user    => 'root',
+          unless  => '/usr/bin/npm --version | /bin/grep -qe ^2',
+          require => Package['nodejs'],
+        }
     }
 
     env::var { 'NPM_CONFIG_CACHE':

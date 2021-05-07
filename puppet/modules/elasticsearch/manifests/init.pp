@@ -11,10 +11,19 @@ class elasticsearch(
 
     require_package('openjdk-8-jre-headless')
 
+    file { '/tmp/elasticsearch-oss-6.8.23':
+      ensure  => present,
+      source  => 'https://apt.wikimedia.org/wikimedia/pool/thirdparty/elastic68/e/elasticsearch-oss/elasticsearch-oss_6.8.23_all.deb',
+      owner   => root,
+      group   => root,
+      mode    => '0444',
+    }
+
     package { 'elasticsearch':
-        ensure  => latest,
-        name    => 'elasticsearch-oss',
-        require => File['/etc/default/elasticsearch'],
+        provider => dpkg,
+        ensure   => installed,
+        source   => '/tmp/elasticsearch-oss-6.8.23',
+        require  => File['/etc/default/elasticsearch'],
     }
 
     # Install a customized elasticsearch.yml

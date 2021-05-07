@@ -3,9 +3,9 @@
 class php::package {
     package { [
         'php',
-        'php-common',
+        'php7.2-common',
         'php7.2',
-        'php-apcu',
+        'php7.2-apcu',
         'php7.2-cli',
         'php7.2-curl',
         'php7.2-dev',
