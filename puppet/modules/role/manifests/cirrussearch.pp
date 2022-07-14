@@ -36,9 +36,9 @@ class role::cirrussearch (
 #        require => Package['wmf-elasticsearch-search-plugins']
 #    }
 
-    file { '/tmp/wmf-elasticsearch-search-plugins_6.8.23-1~stretch_all.deb':
+    file { '/tmp/wmf-elasticsearch-search-plugins_6.8.23-3~stretch_all.deb':
       ensure  => present,
-      source  => 'https://apt.wikimedia.org/wikimedia/pool/component/elastic68/w/wmf-elasticsearch-search-plugins/wmf-elasticsearch-search-plugins_6.8.23-1~stretch_all.deb',
+      source  => 'https://apt.wikimedia.org/wikimedia/pool/component/elastic68/w/wmf-elasticsearch-search-plugins/wmf-elasticsearch-search-plugins_6.8.23-3~stretch_all.deb',
       owner   => root,
       group   => root,
       mode    => '0444',
@@ -47,7 +47,7 @@ class role::cirrussearch (
     package { 'wmf-elasticsearch-search-plugins':
       provider => dpkg,
       ensure   => installed,
-      source   => '/tmp/wmf-elasticsearch-search-plugins_6.8.23-1~stretch_all.deb',
+      source   => '/tmp/wmf-elasticsearch-search-plugins_6.8.23-3~stretch_all.deb',
       before => Service['elasticsearch'],
     }
 
