@@ -9,12 +9,19 @@ class elasticsearch(
 ) {
     require ::elasticsearch::repository
 
-    require_package('openjdk-8-jre-headless')
+    file { '/tmp/elasticsearch-oss_7.10.2_amd64.deb':
+        ensure  => present,
+        source  => 'https://apt.wikimedia.org/wikimedia/pool/thirdparty/elastic710/e/elasticsearch-oss/elasticsearch-oss_7.10.2_amd64.deb',
+        owner   => root,
+        group   => root,
+        mode    => '0444',
+    }
 
     package { 'elasticsearch':
-        ensure  => latest,
-        name    => 'elasticsearch-oss',
-        require => File['/etc/default/elasticsearch'],
+        provider => dpkg,
+        ensure   => installed,
+        source   => '/tmp/elasticsearch-oss_7.10.2_amd64.deb',
+        require  => File['/etc/default/elasticsearch'],
     }
 
     # Install a customized elasticsearch.yml
@@ -47,7 +54,6 @@ class elasticsearch(
         enable  => true,
         require => [
             Package['elasticsearch'],
-            Package['openjdk-8-jre-headless'],
             Systemd::Service['elasticsearch'],
         ]
     }

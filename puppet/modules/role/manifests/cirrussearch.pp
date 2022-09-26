@@ -21,19 +21,18 @@ class role::cirrussearch (
     include ::role::eventbus
 
     # Elasticsearch plugins (for search)
-    package { 'wmf-elasticsearch-search-plugins':
-        ensure => latest,
-        before => Service['elasticsearch'],
+    file { '/tmp/wmf-elasticsearch-search-plugins_7.10.2-1~stretch_all.deb':
+        ensure  => present,
+        source  => 'https://apt.wikimedia.org/wikimedia/pool/component/elastic710/w/wmf-elasticsearch-search-plugins/wmf-elasticsearch-search-plugins_7.10.2-1~stretch_all.deb',
+        owner   => root,
+        group   => root,
+        mode    => '0444',
     }
-
-    # TODO: remove hack once elasticsearch 6 is well establshed
-    # The reason we need this is that when we migrate from elasticsearch 5
-    # to elasticsearch-oss 6 the plugin directory is emptied
-    # call apt --reinstall to make sure the plugins are reinstalled
-    exec { 'fix-plugins':
-        command => 'apt-get install --reinstall wmf-elasticsearch-search-plugins',
-        creates => '/usr/share/elasticsearch/plugins/extra',
-        require => Package['wmf-elasticsearch-search-plugins']
+    package { 'wmf-elasticsearch-search-plugins':
+        provider => dpkg,
+        ensure   => installed,
+        source   => '/tmp/wmf-elasticsearch-search-plugins_7.10.2-1~stretch_all.deb',
+        before => Service['elasticsearch'],
     }
 
     mediawiki::wiki { 'cirrustest': }
