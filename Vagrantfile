@@ -59,6 +59,11 @@ unless Vagrant::DEFAULT_SERVER_URL.frozen?
   Vagrant::DEFAULT_SERVER_URL.replace('https://vagrantcloud.com')
 end
 
+# @see https://github.com/hashicorp/vagrant/issues/12610#issuecomment-1117967936
+def is_arm64()
+  `uname -m` == "arm64" || `/usr/bin/arch -64 sh -c "sysctl -in sysctl.proc_translated"`.strip() == "0"
+end
+
 Vagrant.configure('2') do |config|
   config.vm.post_up_message = 'Documentation: https://www.mediawiki.org/wiki/MediaWiki-Vagrant'
   config.package.name = 'mediawiki.box'
@@ -108,7 +113,11 @@ Vagrant.configure('2') do |config|
   # Note that port forwarding works via localhost but not via external
   # interfaces of the host machine by default...
   config.vm.provider :parallels do |_parallels, override|
-    override.vm.box = 'generic/debian10'
+    if is_arm64()
+      override.vm.box = 'bstorm/debian-10-arm64'
+    else
+      override.vm.box = 'generic/debian10'
+    end
     override.vm.network :private_network, ip: settings[:static_ip]
     _parallels.memory = settings[:vagrant_ram]
     _parallels.cpus = [settings[:vagrant_cores], 8].min
