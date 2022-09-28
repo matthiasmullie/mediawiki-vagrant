@@ -86,8 +86,8 @@ crm::dash::dir: "%{hiera('mwv::services_dir')}/fundraising-dash"
 dumps::db_user: "%{hiera('mediawiki::multiwiki::db_user')}"
 dumps::db_pass: "%{hiera('mediawiki::multiwiki::db_pass')}"
 
-elasticsearch::repository::es_package: elastic68
-elasticsearch::repository::es_version: 6.8
+elasticsearch::repository::es_package: elastic710
+elasticsearch::repository::es_version: 7.10
 
 logstash::heap_memory_mb: 192
 logstash::pipeline_workers: 1
@@ -438,5 +438,5 @@ wikilabels::port: 18881
 
 xhprofgui::dir: "%{hiera('mwv::vendor_dir')}/xhprof"
 
-elasticsearch::min_heap: '256m'
-elasticsearch::max_heap: '512m'
+elasticsearch::min_heap: '512m'
+elasticsearch::max_heap: '1024m'
