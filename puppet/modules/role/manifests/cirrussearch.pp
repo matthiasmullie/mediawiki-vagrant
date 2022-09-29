@@ -21,8 +21,20 @@ class role::cirrussearch (
     include ::role::eventbus
 
     # Elasticsearch plugins (for search)
+    $es_package = $::elasticsearch::repository::es_package
+    $plugins_version = $::elasticsearch::repository::es_plugins_version
+    file { '/tmp/wmf-elasticsearch-search-plugins.deb':
+        ensure  => present,
+        source  => "https://apt.wikimedia.org/wikimedia/pool/component/${es_package}/w/wmf-elasticsearch-search-plugins/wmf-elasticsearch-search-plugins_${plugins_version}_all.deb",
+        owner   => root,
+        group   => root,
+        mode    => '0444',
+    }
+
     package { 'wmf-elasticsearch-search-plugins':
-        ensure => latest,
+        provider => dpkg,
+        ensure   => installed,
+        source   => '/tmp/wmf-elasticsearch-search-plugins.deb',
         before => Service['elasticsearch'],
     }
 
@@ -62,7 +74,7 @@ class role::cirrussearch (
         require => File['/usr/local/bin/is-cirrussearch-forceindex-needed'],
     }
 
-    $es_version = $::elasticsearch::repository::es_version
+    $es_version = regsubst( $::elasticsearch::repository::es_version, '^(\d+\.\d+).+$', '\1' )
     mediawiki::import::text { 'VagrantRoleCirrusSearch':
         content => template('role/cirrussearch/VagrantRoleCirrusSearch.wiki.erb'),
     }

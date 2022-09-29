@@ -10,7 +10,7 @@ class elasticsearch(
     require ::elasticsearch::repository
 
     package { 'elasticsearch':
-        ensure  => latest,
+        ensure  => $::elasticsearch::repository::es_version,
         name    => 'elasticsearch-oss',
         require => File['/etc/default/elasticsearch'],
     }
